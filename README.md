@@ -1,112 +1,159 @@
-# Image Text Extraction Using OpenAI GPT-4
+# **Universal LLM-based OCR (Image → Text Extraction)**
 
-This Python script extracts text from images using OpenAI's GPT-4 API. The script supports both image URLs and base64-encoded images as inputs. Extracted text can be saved to a local file for further use.
+This project demonstrates how to perform **OCR (Optical Character Recognition)** using **any Large Language Model (LLM)** that supports image input via the **OpenAI-compatible SDK** (OpenAI, OpenRouter, Groq, Together, etc.).
 
----
+It works with models such as:
 
-## Features
-
-- **Text Extraction from Image URLs:** Extract text directly from an image available online.
-- **Text Extraction from Base64 Images:** Extract text from locally stored images by converting them into base64 encoding.
-- **Accurate Text Parsing:** Ensures completeness by carefully extracting all text elements, including faint or small text, and preserving the original structure.
-- **Output to File:** Saves extracted text to a specified file.
+* GPT-4o / GPT-4o-mini
+* Llama Vision models
+* Claude Vision (via OpenAI-compatible routers)
+* Any future LLM that accepts `"image_url"` or `"image_base64"`
 
 ---
 
-## Requirements
+## 🚀 **Features**
 
-- Python 3.7+
-- OpenAI Python SDK
-- Base64 library (standard library)
+* **LLM-powered OCR (not traditional Tesseract OCR)**
+* Works with **any model endpoint** that accepts images
+* **Supports:**
 
----
+  * 🌐 Image URLs
+  * 🖼️ Local images (converted to Base64)
+* **Preserves structure & formatting**
+* Output can be printed or saved to a text file
+* Easily extendable to:
 
-## Installation
-
-1. Clone this repository or download the script.
-2. Install the required dependencies:
-   ```bash
-   pip install openai
-   ```
-3. Ensure you have an OpenAI API key.
-
----
-
-## Usage
-
-### Extracting Text from an Image URL
-
-1. Uncomment the relevant section in the script:
-   ```python
-   # image_url = "https://example.com/image.jpg"
-   # extracted_text = image_to_text_from_url(image_url)
-   # output_file_path = "path/to/extracted_text.txt"
-   # with open(output_file_path, "a", encoding="utf-8") as text_file:
-   #     text_file.write(extracted_text)
-   #     text_file.write("\n")
-   ```
-2. Replace the `image_url` with the URL of your image.
-3. Run the script and view the extracted text in the specified file.
-
-### Extracting Text from a Local Image
-
-1. Provide the path to your local image:
-   ```python
-   local_image_path = "path/to/image.png"
-   ```
-2. The script will automatically convert the image to base64 encoding and extract text.
-3. View the extracted text in the console or in the specified output file.
+  * JSON output
+  * Multi-image extraction
+  * PDF → Image → Text pipelines
 
 ---
 
-## Code Structure
+## 📦 **Requirements**
 
-### Functions
+* Python 3.8+
+* `openai` (or compatible OpenRouter SDK)
+* `base64` (comes with Python)
 
-1. **`image_to_base64(image_path)`**
-   - Converts a local image to base64 encoding.
+Install dependencies:
 
-2. **`image_to_text_from_url(image_url)`**
-   - Extracts text from an image using its URL.
-
-3. **`image_to_text_from_base64(image_base64)`**
-   - Extracts text from an image provided in base64 format.
-
-### Example Workflow
-
-- **Input:** Image URL or local image file.
-- **Process:**
-  - For URLs: Direct API call.
-  - For local files: Convert to base64, then API call.
-- **Output:** Extracted text saved to a file.
+```bash
+pip install openai python-dotenv
+```
 
 ---
 
-## Configuration
+## ⚙️ **Configuration**
 
-- Update your OpenAI API key in the `client` initialization:
-  ```python
-  client = OpenAI(
-      api_key="your-openai-api-key"
-  )
-  ```
-- Specify the file path for saving the extracted text.
+Set up your API key:
 
----
+```python
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY")
+)
+```
 
-## Limitations
-
-- The script requires an active OpenAI API key with appropriate permissions.
-- Limited by the capabilities of the GPT-4 model for OCR tasks.
+You can replace the base URL or model with **any LLM endpoint**.
 
 ---
 
-## Contributing
+## 🧠 **Why LLM-based OCR?**
 
-Feel free to fork this repository and submit pull requests for new features or improvements.
+Unlike classical OCR tools (Tesseract, EasyOCR), LLMs:
+
+* Understand complex layouts
+* Extract text from low-quality images
+* Preserve meaning, structure, labels
+* Interpret tables, paragraphs, and mixed fonts
+
+This project shows how to use LLMs as intelligent OCR engines.
 
 ---
 
-## License
+## 🧰 **Usage**
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+### ✔️ **Extract Text from an Image URL**
+
+```python
+image_url = "https://example.com/image.jpg"
+extracted_text = image_to_text_from_url(image_url)
+
+with open("output.txt", "a", encoding="utf-8") as f:
+    f.write(extracted_text)
+```
+
+---
+
+### ✔️ **Extract Text from a Local Image**
+
+```python
+local_image_path = "image.png"
+image_base64 = image_to_base64(local_image_path)
+
+text = image_to_text_from_base64(image_base64)
+print(text)
+```
+
+---
+
+## 🗂️ **Functions Overview**
+
+### **`image_to_base64(image_path)`**
+
+Converts local image → Base64 string.
+
+### **`image_to_text_from_url(image_url)`**
+
+Sends URL directly to the LLM and extracts text.
+
+### **`image_to_text_from_base64(image_base64)`**
+
+Sends Base64-encoded image to the LLM vision endpoint.
+
+---
+
+## 🔄 **Model-Agnostic Design**
+
+Just change one line:
+
+```python
+model="gpt-4o-mini"
+```
+
+to:
+
+```python
+model="llama-3.2-vision"
+# or
+model="gpt-4o"
+# or
+model="groq-vision-preview"
+# or
+model="any-supported-model"
+```
+
+No other code changes needed!
+
+---
+
+## 📌 **Use Cases**
+
+* Invoice/receipt text extraction
+* Handwritten notes to digital text
+* OCR for PDFs (after converting PDF → image)
+* Dataset preparation
+* Document summarization via OCR
+
+---
+
+## 🤝 Contributing
+
+Issues and pull requests are welcome.
+You can extend this to PDF OCR, batch processing, or JSON structured output.
+
+---
+
+## 📄 License
+
+MIT License — free to use and modify.
